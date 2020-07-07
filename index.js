@@ -31,7 +31,7 @@ createAutoComplete({
   root: document.querySelector("#left-autocomplete"),
   onOptionSelect(movie) {
     document.querySelector(".tutorial").classList.add("is-hidden");
-    onMovieSelect(movie, document.querySelector("#left-summary"));
+    onMovieSelect(movie, document.querySelector("#left-summary"), "left");
   },
 });
 
@@ -40,11 +40,13 @@ createAutoComplete({
   root: document.querySelector("#right-autocomplete"),
   onOptionSelect(movie) {
     document.querySelector(".tutorial").classList.add("is-hidden");
-    onMovieSelect(movie, document.querySelector("#right-summary"));
+    onMovieSelect(movie, document.querySelector("#right-summary"), "right");
   },
 });
 
-const onMovieSelect = async (movie, summaryElement) => {
+let leftMovie;
+let rightMovie;
+const onMovieSelect = async (movie, summaryElement, side) => {
   const response = await axios.get("http://www.omdbapi.com/", {
     params: {
       apikey: "dec18788",
@@ -53,6 +55,20 @@ const onMovieSelect = async (movie, summaryElement) => {
   });
 
   summaryElement.innerHTML = movieTemplate(response.data);
+
+  if (side === "left") {
+    leftMovie = response.data;
+  } else {
+    rightMovie = response.data;
+  }
+
+  if (leftMovie && rightMovie) {
+    runComparison();
+  }
+};
+
+const runComparison = () => {
+  console.log("Time for comparison!");
 };
 
 const movieTemplate = (movieDetail) => {
